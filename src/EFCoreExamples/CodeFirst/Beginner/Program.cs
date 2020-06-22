@@ -1,8 +1,5 @@
 ﻿using Beginner.Data;
 using Beginner.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -10,30 +7,19 @@ namespace Beginner
 {
     class Program
     {
-        private static IConfigurationRoot Configuration { get; set; }
-
         static async Task Main(string[] args)
         {
-            IConfigurationBuilder builder = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json");
-            Configuration = builder.Build();
+            var dbContext = new BlogDbContext();
 
-            IServiceCollection services = new ServiceCollection();
-            services.AddDbContext<BookDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            var postObject = new Post { Title = "My First Post" };
+            postObject.Comments.Add(new Comment { Body = "This is my first comment " });
 
-            var ServiceProvider = services.BuildServiceProvider();
+            dbContext.Posts.Add(postObject);
+            _ = await dbContext.SaveChangesAsync();
 
-            var dbContext = ServiceProvider.GetService<BookDbContext>();
 
-            dbContext.Books.Add(new Book { Title = "Good", Author = new Author { FirstName = "Usman", LastName = "Rafiq" } });
-            _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            Console.WriteLine("Entity Framework Core");
 
-            var book = await dbContext.Books.FirstOrDefaultAsync();
-
-            Console.WriteLine("Hello World!");
-
-            Console.WriteLine($"First book is {book.Title}");
         }
     }
 }
