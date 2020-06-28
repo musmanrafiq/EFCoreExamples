@@ -1,5 +1,6 @@
 ﻿using Beginner.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Beginner.Data
 {
@@ -10,7 +11,9 @@ namespace Beginner.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server=localhost;Database=BlogDb;Trusted_Connection=True;MultipleActiveResultSets=true;");
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder().AddJsonFile("appSettings.json");
+            IConfiguration configuration = configBuilder.Build();
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString"));
         }
     }
 }
