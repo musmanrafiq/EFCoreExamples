@@ -12,6 +12,27 @@ namespace Beginner
         {
             // created db context
             var dbContext = new BlogDbContext();
+
+            var post = new Post
+            {
+                Title = "Test 2",
+                CategoryId = 1,
+                PostTags = new[]
+                {
+                    new PostTag
+                    {
+                        TagsId = 2,
+                    }
+                }
+            };
+
+            dbContext.Add(post);
+            int noOfRec = await dbContext.SaveChangesAsync();
+            Console.WriteLine(noOfRec);
+        }
+
+        public static async Task PreviousOps(BlogDbContext dbContext)
+        {
             // created a post object
             var postObject = new Post
             {
